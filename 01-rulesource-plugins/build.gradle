@@ -1,0 +1,29 @@
+/*
+    Exercises:
+
+    1. Create a new RuleSource plugin and apply it to the project.
+    2. Add a rule to define a new model element of type Greeting.
+    3. Add a mutation rule that sets the 'salutation' and 'subject' properties of the Greeting model element.
+    4. Add a mutation rule that creates a new task of type GreetingTask that outputs to value
+       of the Greeting model element.
+    5. Run the task and verify the result.
+    6. (Optional) Add a rule to define a new model element of type String and assign a value that will be 
+       used as the description for the GreetingTask.
+    7. (Optional) Modify the rule that creates the GreetingTask to accept the new description model 
+       element as an input and set the description property on the task accordingly.
+    8. (Optional) Run the 'tasks' task and verify the result.
+ */
+
+class GreetingTask extends DefaultTask {
+    Greeting message
+    
+    @TaskAction
+    void sayGreeting() {
+        println "$message.salutation, $message.subject"
+    }
+}
+
+class Greeting {
+    String salutation
+    String subject
+}

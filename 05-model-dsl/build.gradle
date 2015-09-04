@@ -1,0 +1,41 @@
+/*
+    Exercises:
+
+    1. Use the model DSL to add some new Greetings to the model.
+    2. Run the created tasks and verify the result.
+    3. Add a mutation rule via the model DSL to modify one of your greetings.
+    4. Run the task for that greeting an observe the result.
+ */
+
+class MyPlugin extends RuleSource {   
+    @Model
+    void greetings(ModelMap<Greeting> greetings) { }
+     
+    @Mutate
+    void createGreetingTask(ModelMap<Task> tasks, ModelMap<Greeting> greetings) {
+        greetings.keySet().each { name -> 
+            tasks.create("${name}Greeting", GreetingTask) {
+                message = greetings[name]
+            }
+        }
+    }
+}
+
+@Managed
+interface Greeting {
+    String getSalutation()
+    void setSalutation(String salutation)
+    String getSubject()
+    void setSubject(String subject)
+}
+
+class GreetingTask extends DefaultTask {
+    Greeting message
+    
+    @TaskAction
+    void sayGreeting() {
+        println "$message.salutation, $message.subject"
+    }
+}
+
+apply plugin: MyPlugin

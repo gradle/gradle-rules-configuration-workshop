@@ -1,0 +1,40 @@
+/*
+    Exercises:
+
+    1. Add a `@Defaults` rule to set a default salutation and subject to the Greeting model element.
+    2. Run the 'printGreeting' task and observe the result.
+    3. Add a `@Mutate` rule that sets the 'salutation' property.
+    4. Run the 'printGreeting' task and observe the result.
+    5. Add a `@Finalize` rule that sets the 'subject' property.
+    6. Run the 'printGreeting' task and observe the result.
+    7. Add a `@Validate` rule that throws and exception if the 'salutation' property is greater than
+       10 characters in length. Break the condition and observe the result.
+ */
+
+class MyPlugin extends RuleSource {
+    @Model
+    Greeting greeting() { new Greeting() }
+    
+    @Mutate
+    void createGreetingTask(ModelMap<Task> tasks, Greeting greeting) {
+        tasks.create('printGreeting', GreetingTask) {
+            message = greeting
+        }
+    }
+}
+
+class Greeting {
+    String salutation
+    String subject
+}
+
+class GreetingTask extends DefaultTask {
+    Greeting message
+    
+    @TaskAction
+    void sayGreeting() {
+        println "$message.salutation, $message.subject"
+    }
+}
+
+apply plugin: MyPlugin

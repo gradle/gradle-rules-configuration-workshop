@@ -1,0 +1,33 @@
+/*
+    Exercises:
+
+    1. Add a rule that adds a ModelMap of Greeting types to the model.
+    2. Add a mutation rule that adds some entries to the collection of Greetings.
+    3. Add a mutation rule that creates a GreetingTask for every greeting.
+    4. Run each new task and verify the result.
+
+    Hint: You can iterate over the collection using `ModelMap.keySet().each { key -> }`.
+ */
+
+class MyPlugin extends RuleSource {    
+
+}
+
+@Managed
+interface Greeting {
+    String getSalutation()
+    void setSalutation(String salutation)
+    String getSubject()
+    void setSubject(String subject)
+}
+
+class GreetingTask extends DefaultTask {
+    Greeting message
+    
+    @TaskAction
+    void sayGreeting() {
+        println "$message.salutation, $message.subject"
+    }
+}
+
+apply plugin: MyPlugin
