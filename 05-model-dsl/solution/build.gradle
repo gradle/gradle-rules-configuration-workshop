@@ -1,0 +1,50 @@
+model {
+    greetings {
+        polite(Greeting) {
+            salutation = 'Welcome'
+            subject = 'Friend'
+        }
+        rude(Greeting) {
+            salutation = 'Go away'
+            subject = 'Loser'
+        }
+        /*
+        rude {
+            subject = 'Jerk'
+        }
+        */
+    }
+}
+
+class MyPlugin extends RuleSource {   
+    @Model
+    void greetings(ModelMap<Greeting> greetings) { }
+     
+    @Mutate
+    void createGreetingTask(ModelMap<Task> tasks, ModelMap<Greeting> greetings) {
+        greetings.keySet().each { name -> 
+            tasks.create("${name}Greeting", GreetingTask) {
+                message = greetings[name]
+            }
+        }
+    }
+}
+
+@Managed
+interface Greeting {
+    String getSalutation()
+    void setSalutation(String salutation)
+    String getSubject()
+    void setSubject(String subject)
+}
+
+class GreetingTask extends DefaultTask {
+    Greeting message
+    
+    @TaskAction
+    void sayGreeting() {
+        println "$message.salutation, $message.subject"
+    }
+}
+
+apply plugin: MyPlugin

@@ -1,0 +1,35 @@
+class MyPlugin extends RuleSource {
+    @Model
+    Greeting greeting() {
+        return new Greeting()
+    }
+    
+    @Mutate
+    void updateGreeting(Greeting greeting) {
+        greeting.salutation = 'Hello'
+        greeting.subject = 'World'
+    }
+    
+    @Mutate
+    void createGreetingTask(ModelMap<Task> tasks, Greeting greeting) {
+        tasks.create('printGreeting', GreetingTask) {
+            message = greeting
+        }
+    }
+}
+
+class GreetingTask extends DefaultTask {
+    Greeting message
+    
+    @TaskAction
+    void sayGreeting() {
+        println "$message.salutation, $message.subject"
+    }
+}
+
+class Greeting {
+    String salutation
+    String subject
+}
+
+apply plugin: MyPlugin

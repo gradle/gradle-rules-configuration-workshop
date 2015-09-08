@@ -1,0 +1,56 @@
+class MyPlugin extends RuleSource {
+    @Model
+    Greeting greeting() { new Greeting() }
+    
+    @Defaults
+    void greetingDefaults(Greeting greeting) {
+        greeting.salutation = 'Generic salutation'
+        greeting.subject = "Sir or Ma'am"
+    }
+    
+    
+    @Mutate
+    void mutateGreeting(Greeting greeting) {
+        greeting.salutation = 'Good day sdkljfalskfjs'
+    }
+    
+    
+    
+    @Finalize
+    void finalizeGreeting(Greeting greeting) {
+        greeting.subject = 'World'
+    }
+    
+    
+    
+    @Validate
+    void validateGreeting(Greeting greeting) {
+        if (greeting.salutation.length() > 10) {
+            throw new GradleException("Length of 'greeting.salutation' cannot be more than 10 characters.")
+        }
+    }
+    
+    
+    @Mutate
+    void createGreetingTask(ModelMap<Task> tasks, Greeting greeting) {
+        tasks.create('printGreeting', GreetingTask) {
+            message = greeting
+        }
+    }
+}
+
+class Greeting {
+    String salutation
+    String subject
+}
+
+class GreetingTask extends DefaultTask {
+    Greeting message
+    
+    @TaskAction
+    void sayGreeting() {
+        println "$message.salutation, $message.subject"
+    }
+}
+
+apply plugin: MyPlugin
